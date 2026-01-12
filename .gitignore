@@ -1,0 +1,17 @@
+# Entorno virtual
+.venv/
+
+# Output del script
+output/
+*.xlsx
+*.xls
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
