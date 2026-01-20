@@ -1,5 +1,6 @@
 # Entorno virtual
 .venv/
+.visualsPBI
 
 # Output del script
 output/

@@ -1,0 +1,47 @@
+{
+  "name": "Control Stock - Semaforo",
+  "dataColors": [
+    "#D64541",
+    "#F5D547",
+    "#2ECC71",
+    "#5DADE2",
+    "#AF7AC5",
+    "#F39C12",
+    "#95A5A6",
+    "#1ABC9C"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#1F1F1F",
+  "tableAccent": "#2E86C1",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          {
+            "show": true,
+            "fontFamily": "Segoe UI",
+            "fontSize": 12
+          }
+        ],
+        "labels": [
+          {
+            "fontFamily": "Segoe UI",
+            "fontSize": 10
+          }
+        ],
+        "categoryLabels": [
+          {
+            "fontFamily": "Segoe UI",
+            "fontSize": 10
+          }
+        ],
+        "legend": [
+          {
+            "show": true,
+            "position": "Top"
+          }
+        ]
+      }
+    }
+  }
+}

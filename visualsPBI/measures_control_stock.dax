@@ -1,0 +1,60 @@
+-- Tabla: alertas
+-- Crea estas medidas en Power BI (Modeling > New measure)
+
+Stock $ Costo :=
+SUM(alertas[stock_val_costo])
+
+Stock $ PVP :=
+SUM(alertas[stock_val_pvp])
+
+Stock Unidades :=
+SUM(alertas[stock])
+
+Venta Prom Mensual :=
+SUM(alertas[vta_prom_mensual])
+
+Cobertura Ponderada (Meses) :=
+DIVIDE([Stock Unidades], [Venta Prom Mensual])
+
+SKUs (Count) :=
+DISTINCTCOUNT(alertas[sku])
+
+SKUs Críticos :=
+CALCULATE([SKUs (Count)], alertas[estado] = "CRITICO")
+
+SKUs Sobrestock :=
+CALCULATE([SKUs (Count)], alertas[estado] = "SOBRESTOCK")
+
+% SKUs Críticos :=
+DIVIDE([SKUs Críticos], [SKUs (Count)])
+
+% SKUs Sobrestock :=
+DIVIDE([SKUs Sobrestock], [SKUs (Count)])
+
+SKUs a Revisar :=
+CALCULATE([SKUs (Count)], alertas[revisar] = TRUE())
+
+$ Costo en Crítico :=
+CALCULATE([Stock $ Costo], alertas[estado] = "CRITICO")
+
+$ Costo en Sobrestock :=
+CALCULATE([Stock $ Costo], alertas[estado] = "SOBRESTOCK")
+
+-- Rankings (para usar en tablas / TOP N)
+Ranking Sobrestock ($ Costo) :=
+RANKX(
+    ALL(alertas[sku]),
+    [Stock $ Costo],
+    ,
+    DESC,
+    Dense
+)
+
+Ranking Crítico (Cobertura) :=
+RANKX(
+    ALL(alertas[sku]),
+    AVERAGE(alertas[cobertura_meses]),
+    ,
+    ASC,
+    Dense
+)

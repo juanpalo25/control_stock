@@ -120,6 +120,11 @@ def main():
         how="left"
     )
     df["vta_prom_mensual"] = df["vta_prom_mensual"].fillna(0)
+    # -----------------------
+    # Modalidad comercial
+    # -----------------------
+    df["modalidad"] = "COMPRA"
+    df.loc[df["costo"] == 0, "modalidad"] = "CONSIGNA"
 
     # Cobertura (meses)
     df["cobertura_meses"] = df.apply(
@@ -130,26 +135,20 @@ def main():
     df["obsoleto"] = (df["vta_prom_mensual"] == 0) & (df["stock"] > 0)
     df_obsoletos = df[df["obsoleto"]].copy()
     df = df[~df["obsoleto"]].copy()
-    # -----------------------
+    
+   # -----------------------
     # Flags de revisión (calidad de datos)
     # -----------------------
     df["revisar"] = False
-    motivos = []
-
-    # costo o pvp en 0 (valorización no confiable)
-    m1 = (df["costo"] == 0) & (df["stock"] > 0)
-    m2 = (df["pvp"] == 0) & (df["stock"] > 0)
-
-    # ventas en 0 pero stock > 0 (ya sacamos obsoletos, esto sería raro si quedó algo)
-    m3 = (df["vta_prom_mensual"] == 0) & (df["stock"] > 0)
-
-    df.loc[m1 | m2 | m3, "revisar"] = True
-
-    # Motivo simple (podés dejar uno principal)
     df["motivo_revisar"] = ""
-    df.loc[m1, "motivo_revisar"] = "COSTO=0"
-    df.loc[m2 & ~m1, "motivo_revisar"] = "PVP=0"
-    df.loc[m3 & ~(m1 | m2), "motivo_revisar"] = "VENTA=0"
+
+    # SOLO revisar compras con datos inválidos
+    m_costo_compra_0 = (df["modalidad"] == "COMPRA") & (df["costo"] == 0) & (df["stock"] > 0)
+    m_pvp_0 = (df["pvp"] == 0) & (df["stock"] > 0)
+
+    df.loc[m_costo_compra_0 | m_pvp_0, "revisar"] = True
+    df.loc[m_costo_compra_0, "motivo_revisar"] = "COMPRA con costo 0"
+    df.loc[m_pvp_0 & ~m_costo_compra_0, "motivo_revisar"] = "PVP = 0"
 
     # Mostrar diagnóstico del paso
     print("✅ Mes actual detectado (columna):", current_month_col)
